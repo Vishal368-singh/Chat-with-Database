@@ -12,36 +12,29 @@ conn = psycopg2.connect(
     user=os.getenv("DB_USER"),
     password=os.getenv("DB_PASS")
 )
+
+
+def check_connection():
+    return conn
+
    
 def execute_query(sql):
-
     cur = conn.cursor()
-
     try:
-        print("\nExecuting SQL:")
-        print(sql)
-
+        print(f"Executing SQL: {sql}")
         cur.execute(sql)
-
         columns = [desc[0] for desc in cur.description]
-
         rows = cur.fetchall()
-
         result = [
             dict(zip(columns, row))
             for row in rows
         ]
-
         return result
 
     except Exception as e:
-
         conn.rollback()
-
-        print("\nDATABASE ERROR:")
         print(type(e).__name__)
         print(str(e))
-
         raise
 
     finally:
